@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake 100 Level - Game Ular-Ular dengan Tantangan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #00ff88;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #8f8;
+            font-size: 1.2rem;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .game-board-section {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .game-info-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+        
+        .info-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            color: #00ff88;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #8f8;
+        }
+        
+        .level-progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .level-bar {
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .level-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00cc6a);
+            border-radius: 10px;
+            width: 1%;
+            transition: width 0.5s ease;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #pause-btn {
+            background: linear-gradient(135deg, #ffaa00 0%, #ff8800 100%);
+        }
+        
+        #restart-btn {
+            background: linear-gradient(135deg, #ff5555 0%, #ff0000 100%);
+        }
+        
+        #game-board {
+            background-color: #0a0a1a;
+            border: 4px solid #00ff88;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .level-description {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #00ff88;
+        }
+        
+        .level-title {
+            font-size: 1.2rem;
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        
+        .obstacle-list {
+            list-style-type: none;
+            margin-top: 10px;
+        }
+        
+        .obstacle-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .obstacle-list li:before {
+            content: "•";
+            color: #00ff88;
+            position: absolute;
+            left: 0;
+        }
+        
+        .mobile-controls {
+            display: none;
+            margin-top: 30px;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mobile-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .mobile-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 2px solid #00ff88;
+            user-select: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mobile-btn:active {
+            background: rgba(0, 255, 136, 0.5);
+            transform: scale(0.95);
+        }
+        
+        .game-over-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .game-over-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 4px solid #00ff88;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+        }
+        
+        .game-over-title {
+            font-size: 3rem;
+            color: #ff5555;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
+        }
+        
+        .level-complete-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .level-complete-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 4px solid #00ff88;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+        }
+        
+        .level-complete-title {
+            font-size: 3rem;
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .level-up-message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #8f8;
+        }
+        
+        .achievement {
+            color: #ffaa00;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: flex;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .game-container {
+                flex-direction: column;
+            }
+            
+            #game-board {
+                width: 95vw;
+                height: 95vw;
+                max-width: 400px;
+                max-height: 400px;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .mobile-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 30px;
+            }
+        }
+        
+        .obstacle-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .obstacle-icon {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .wall {
+            color: #9999ff;
+        }
+        
+        .moving {
+            color: #ffaa00;
+        }
+        
+        .teleport {
+            color: #ff55ff;
+        }
+        
+        .speed {
+            color: #55ffff;
+        }
+        
+        .special {
+            color: #ff5555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SNAKE 100 LEVEL</h1>
+            <div class="subtitle">Game Ular-Ular dengan 100 Level Tantangan Berbeda</div>
+        </header>
+        
+        <div class="game-container">
+            <div class="game-board-section">
+                <canvas id="game-board" width="600" height="600"></canvas>
+                
+                <div class="mobile-controls">
+                    <div class="mobile-row">
+                        <div class="mobile-btn" id="up-btn">↑</div>
+                    </div>
+                    <div class="mobile-row">
+                        <div class="mobile-btn" id="left-btn">←</div>
+                        <div class="mobile-btn" id="down-btn">↓</div>
+                        <div class="mobile-btn" id="right-btn">→</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-info-panel">
+                <div class="info-section">
+                    <div class="section-title">STATISTIK</div>
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="score">0</div>
+                            <div class="stat-label">SCORE</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="level">1</div>
+                            <div class="stat-label">LEVEL</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="lives">3</div>
+                            <div class="stat-label">NYAWA</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="high-score">0</div>
+                            <div class="stat-label">HIGH SCORE</div>
+                        </div>
+                    </div>
+                    
+                    <div class="level-progress">
+                        <div>Progress Level: <span id="level-progress-text">0/10</span></div>
+                        <div class="level-bar">
+                            <div class="level-fill" id="level-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="section-title">KONTROL</div>
+                    <div class="controls">
+                        <button id="start-btn">START GAME</button>
+                        <button id="pause-btn">PAUSE</button>
+                        <button id="restart-btn">RESTART</button>
+                        <button id="next-level-btn" style="display:none">LEVEL BERIKUTNYA</button>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="section-title">LEVEL <span id="current-level">1</span></div>
+                    <div class="level-description">
+                        <div class="level-title" id="level-title">Level Pemula</div>
+                        <div id="level-desc">Ular kecil di arena kosong. Makan 5 makanan untuk naik level.</div>
+                        
+                        <div class="section-title" style="margin-top: 20px; font-size: 1rem;">JENIS RINTANGAN</div>
+                        <div class="obstacle-types">
+                            <div class="obstacle-icon wall">Tembok Statis</div>
+                            <div class="obstacle-icon moving">Rintangan Bergerak</div>
+                            <div class="obstacle-icon teleport">Portal Teleport</div>
+                            <div class="obstacle-icon speed">Zona Kecepatan</div>
+                            <div class="obstacle-icon special">Rintangan Khusus</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="level-description" style="margin-top: 20px;">
+            <div class="section-title">TENTANG 100 LEVEL</div>
+            <p>Game ini memiliki 100 level unik dengan rintangan berbeda setiap level. Setiap 10 level akan membuka mekanik permainan baru. Makan makanan untuk meningkatkan skor dan menyelesaikan level. Hindari rintangan dan jangan menabrak tubuh sendiri!</p>
+            
+            <div class="obstacle-list">
+                <li><strong>Level 1-10:</strong> Tembok sederhana, ular bergerak lambat</li>
+                <li><strong>Level 11-20:</strong> Rintangan bergerak, kecepatan meningkat</li>
+                <li><strong>Level 21-30:</strong> Portal teleport, zona kecepatan berbeda</li>
+                <li><strong>Level 31-50:</strong> Kombinasi rintangan kompleks</li>
+                <li><strong>Level 51-100:</strong> Tantangan ekstrem dengan pola unik</li>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Over Screen -->
+    <div class="game-over-screen" id="game-over-screen">
+        <div class="game-over-content">
+            <div class="game-over-title">GAME OVER</div>
+            <div class="stat-value" id="final-score">0</div>
+            <div class="stat-label">SCORE AKHIR</div>
+            
+            <div style="margin: 30px 0;">
+                <div>Level Tertinggi: <span id="final-level" class="stat-value">1</span></div>
+                <div>High Score: <span id="final-high-score" class="stat-value">0</span></div>
+            </div>
+            
+            <button id="play-again-btn" style="width: 100%; padding: 15px; font-size: 1.2rem;">MAIN LAGI</button>
+        </div>
+    </div>
+    
+    <!-- Level Complete Screen -->
+    <div class="level-complete-screen" id="level-complete-screen">
+        <div class="level-complete-content">
+            <div class="level-complete-title">LEVEL SELESAI!</div>
+            <div class="level-up-message">Selamat! Anda berhasil menyelesaikan Level <span id="completed-level">1</span></div>
+            
+            <div style="margin: 25px 0;">
+                <div class="stat-value" id="level-score">+100</div>
+                <div class="stat-label">SCORE DIPEROLEH</div>
+            </div>
+            
+            <div id="level-achievement" class="achievement">Pencapaian: Ular Pemula</div>
+            
+            <button id="continue-btn" style="width: 100%; padding: 15px; font-size: 1.2rem; margin-top: 20px;">LANJUT KE LEVEL BERIKUTNYA</button>
+        </div>
+    </div>
+
+    <script>
+        // ============= KONFIGURASI GAME =============
+        const canvas = document.getElementById('game-board');
+        const ctx = canvas.getContext('2d');
+        const GRID_SIZE = 20;
+        const GRID_WIDTH = canvas.width / GRID_SIZE;
+        const GRID_HEIGHT = canvas.height / GRID_SIZE;
+        
+        // ============= VARIABEL GAME =============
+        let snake = [];
+        let food = [];
+        let obstacles = [];
+        let portals = [];
+        let speedZones = [];
+        let movingObstacles = [];
+        let direction = 'right';
+        let nextDirection = 'right';
+        let score = 0;
+        let highScore = localStorage.getItem('snake100HighScore') || 0;
+        let currentLevel = 1;
+        let levelProgress = 0;
+        let levelTarget = 5;
+        let lives = 3;
+        let gameSpeed = 150;
+        let gameInterval;
+        let isPaused = false;
+        let isGameOver = false;
+        let isGameStarted = false;
+        let levelComplete = false;
+        
+        // ============= ELEMEN UI =============
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const livesElement = document.getElementById('lives');
+        const highScoreElement = document.getElementById('high-score');
+        const levelProgressText = document.getElementById('level-progress-text');
+        const levelProgressBar = document.getElementById('level-progress-bar');
+        const levelTitle = document.getElementById('level-title');
+        const levelDesc = document.getElementById('level-desc');
+        const currentLevelElement = document.getElementById('current-level');
+        
+        // ============= TOMBOL =============
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const nextLevelBtn = document.getElementById('next-level-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const continueBtn = document.getElementById('continue-btn');
+        
+        // ============= SCREEN =============
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const levelCompleteScreen = document.getElementById('level-complete-screen');
+        
+        // ============= KONTROL MOBILE =============
+        const upBtn = document.getElementById('up-btn');
+        const downBtn = document.getElementById('down-btn');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        
+        // ============= DATA LEVEL =============
+        const levelData = {
+            1: { 
+                title: "Level Pemula", 
+                desc: "Ular kecil di arena kosong. Makan 5 makanan untuk naik level.", 
+                target: 5, 
+                speed: 150,
+                obstacles: 0,
+                hasMoving: false,
+                hasPortals: false,
+                hasSpeedZones: false
+            },
+            2: { 
+                title: "Tembok Sederhana", 
+                desc: "Hindari tembok di pinggir arena. Makan 6 makanan.", 
+                target: 6, 
+                speed: 145,
+                obstacles: 4,
+                hasMoving: false,
+                hasPortals: false,
+                hasSpeedZones: false
+            },
+            5: { 
+                title: "Labyrinth Awal", 
+                desc: "Tembok mulai membentuk labirin sederhana. Makan 7 makanan.", 
+                target: 7, 
+                speed: 140,
+                obstacles: 8,
+                hasMoving: false,
+                hasPortals: false,
+                hasSpeedZones: false
+            },
+            10: { 
+                title: "Level 10: Gerak Pertama", 
+                desc: "Rintangan mulai bergerak! Makan 8 makanan.", 
+                target: 8, 
+                speed: 130,
+                obstacles: 6,
+                hasMoving: true,
+                hasPortals: false,
+                hasSpeedZones: false
+            },
+            15: { 
+                title: "Rintangan Bergerak", 
+                desc: "Hindari rintangan yang bergerak di arena. Makan 9 makanan.", 
+                target: 9, 
+                speed: 120,
+                obstacles: 5,
+                hasMoving: true,
+                hasPortals: false,
+                hasSpeedZones: false
+            },
+            20: { 
+                title: "Level 20: Dunia Portal", 
+                desc: "Portal teleport muncul! Masuk portal untuk berpindah. Makan 10 makanan.", 
+                target: 10, 
+                speed: 110,
+                obstacles: 6,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: false
+            },
+            25: { 
+                title: "Portal & Rintangan", 
+                desc: "Kombinasi portal dan rintangan bergerak. Makan 11 makanan.", 
+                target: 11, 
+                speed: 100,
+                obstacles: 7,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: false
+            },
+            30: { 
+                title: "Level 30: Zona Kecepatan", 
+                desc: "Zona kecepatan muncul - hijau mempercepat, merah memperlambat. Makan 12 makanan.", 
+                target: 12, 
+                speed: 90,
+                obstacles: 8,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: true
+            },
+            40: { 
+                title: "Level 40: Kombinasi Mematikan", 
+                desc: "Semua rintangan aktif! Hati-hati dengan kombinasi mematikan. Makan 15 makanan.", 
+                target: 15, 
+                speed: 80,
+                obstacles: 10,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: true
+            },
+            50: { 
+                title: "Level 50: Setengah Perjalanan", 
+                desc: "Selamat! Anda mencapai setengah perjalanan. Tantangan semakin ekstrem. Makan 20 makanan.", 
+                target: 20, 
+                speed: 70,
+                obstacles: 12,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: true
+            },
+            75: { 
+                title: "Level 75: Tantangan Ekstrem", 
+                desc: "Arena penuh dengan berbagai rintangan. Butuh ketepatan tinggi. Makan 25 makanan.", 
+                target: 25, 
+                speed: 60,
+                obstacles: 15,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: true
+            },
+            100: { 
+                title: "LEVEL 100: FINAL BOSS", 
+                desc: "Level terakhir! Arena berubah menjadi labirin yang sangat rumit. Makan 30 makanan untuk menang!", 
+                target: 30, 
+                speed: 50,
+                obstacles: 20,
+                hasMoving: true,
+                hasPortals: true,
+                hasSpeedZones: true
+            }
+        };
+        
+        // ============= FUNGSI UTAMA =============
+        function initGame() {
+            // Reset ular
+            snake = [
+                {x: 5, y: 10},
+                {x: 4, y: 10},
+                {x: 3, y: 10}
+            ];
+            
+            // Reset variabel
+            direction = 'right';
+            nextDirection = 'right';
+            levelProgress = 0;
+            levelComplete = false;
+            nextLevelBtn.style.display = 'none';
+            
+            // Dapatkan data level
+            const levelConfig = getLevelConfig(currentLevel);
+            levelTarget = levelConfig.target;
+            gameSpeed = levelConfig.speed;
+            
+            // Generate elemen game berdasarkan level
+            generateFood();
+            generateObstacles();
+            generatePortals();
+            generateSpeedZones();
+            generateMovingObstacles();
+            
+            // Update UI
+            updateUI();
+            draw();
+        }
+        
+        function getLevelConfig(level) {
+            // Cari konfigurasi level terdekat yang telah didefinisikan
+            let configLevel = 1;
+            for (const lvl in levelData) {
+                if (level >= lvl) {
+                    configLevel = lvl;
+                }
+            }
+            
+            // Buat konfigurasi berdasarkan level
+            const baseConfig = levelData[configLevel];
+            return {
+                title: `Level ${level}: ${baseConfig.title.split(': ')[1] || baseConfig.title}`,
+                desc: baseConfig.desc,
+                target: Math.min(baseConfig.target + Math.floor((level - configLevel) / 5), 40),
+                speed: Math.max(baseConfig.speed - (level - configLevel) * 2, 40),
+                obstacles: Math.min(baseConfig.obstacles + Math.floor((level - configLevel) / 3), 25),
+                hasMoving: level >= 10,
+                hasPortals: level >= 20,
+                hasSpeedZones: level >= 30
+            };
+        }
+        
+        function generateFood() {
+            food = [];
+            const foodCount = 2 + Math.floor(currentLevel / 20); // Lebih banyak makanan di level tinggi
+            
+            for (let i = 0; i < foodCount; i++) {
+                let validPosition = false;
+                let newFood;
+                
+                while (!validPosition) {
+                    newFood = {
+                        x: Math.floor(Math.random() * GRID_WIDTH),
+                        y: Math.floor(Math.random() * GRID_HEIGHT),
+                        type: Math.random() > 0.9 ? 'gold' : 'normal' // 10% makanan emas
+                    };
+                    
+                    // Periksa tabrakan dengan ular
+                    validPosition = true;
+                    for (let segment of snake) {
+                        if (segment.x === newFood.x && segment.y === newFood.y) {
+                            validPosition = false;
+                            break;
+                        }
+                    }
+                    
+                    // Periksa tabrakan dengan rintangan
+                    if (validPosition) {
+                        for (let obstacle of obstacles) {
+                            if (obstacle.x === newFood.x && obstacle.y === newFood.y) {
+                                validPosition = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Periksa tabrakan dengan makanan lain
+                    if (validPosition) {
+                        for (let f of food) {
+                            if (f.x === newFood.x && f.y === newFood.y) {
+                                validPosition = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                food.push(newFood);
+            }
+        }
+        
+        function generateObstacles() {
+            obstacles = [];
+            const levelConfig = getLevelConfig(currentLevel);
+            
+            for (let i = 0; i < levelConfig.obstacles; i++) {
+                let validPosition = false;
+                let obstacle;
+                
+                while (!validPosition) {
+                    obstacle = {
+                        x: Math.floor(Math.random() * GRID_WIDTH),
+                        y: Math.floor(Math.random() * GRID_HEIGHT)
+                    };
+                    
+                    // Jangan tempatkan di dekat ular awal
+                    const nearSnake = snake.some(segment => 
+                        Math.abs(segment.x - obstacle.x) < 3 && 
+                        Math.abs(segment.y - obstacle.y) < 3
+                    );
+                    
+                    // Jangan tempatkan di makanan
+                    const onFood = food.some(f => f.x === obstacle.x && f.y === obstacle.y);
+                    
+                    // Jangan tempatkan di rintangan lain
+                    const onOtherObstacle = obstacles.some(o => o.x === obstacle.x && o.y === obstacle.y);
+                    
+                    if (!nearSnake && !onFood && !onOtherObstacle) {
+                        validPosition = true;
+                    }
+                }
+                
+                obstacles.push(obstacle);
+            }
+            
+            // Tambahkan tembok di level tertentu
+            if (currentLevel >= 50) {
+                // Tembok berbentuk kotak di tengah
+                const centerX = Math.floor(GRID_WIDTH / 2);
+                const centerY = Math.floor(GRID_HEIGHT / 2);
+                
+                for (let x = centerX - 2; x <= centerX + 2; x++) {
+                    for (let y = centerY - 2; y <= centerY + 2; y++) {
+                        if (x === centerX - 2 || x === centerX + 2 || y === centerY - 2 || y === centerY + 2) {
+                            obstacles.push({x, y});
+                        }
+                    }
+                }
+            }
+        }
+        
+        function generatePortals() {
+            portals = [];
+            const levelConfig = getLevelConfig(currentLevel);
+            
+            if (levelConfig.hasPortals && currentLevel >= 20) {
+                // Buat pasangan portal
+                for (let i = 0; i < 2; i++) {
+                    let validPosition = false;
+                    let portal;
+                    
+                    while (!validPosition) {
+                        portal = {
+                            x: Math.floor(Math.random() * GRID_WIDTH),
+                            y: Math.floor(Math.random() * GRID_HEIGHT),
+                            id: i,
+                            pairId: i === 0 ? 1 : 0
+                        };
+                        
+                        // Jangan tempatkan di dekat ular
+                        const nearSnake = snake.some(segment => 
+                            Math.abs(segment.x - portal.x) < 2 && 
+                            Math.abs(segment.y - portal.y) < 2
+                        );
+                        
+                        // Jangan tempatkan di rintangan
+                        const onObstacle = obstacles.some(o => o.x === portal.x && o.y === portal.y);
+                        
+                        // Jangan tempatkan di makanan
+                        const onFood = food.some(f => f.x === portal.x && f.y === portal.y);
+                        
+                        if (!nearSnake && !onObstacle && !onFood) {
+                            validPosition = true;
+                        }
+                    }
+                    
+                    portals.push(portal);
+                }
+            }
+        }
+        
+        function generateSpeedZones() {
+            speedZones = [];
+            const levelConfig = getLevelConfig(currentLevel);
+            
+            if (levelConfig.hasSpeedZones && currentLevel >= 30) {
+                // Buat beberapa zona kecepatan
+                for (let i = 0; i < 3; i++) {
+                    let validPosition = false;
+                    let zone;
+                    
+                    while (!validPosition) {
+                        const size = 2 + Math.floor(Math.random() * 3);
+                        zone = {
+                            x: Math.floor(Math.random() * (GRID_WIDTH - size)),
+                            y: Math.floor(Math.random() * (GRID_HEIGHT - size)),
+                            width: size,
+                            height: size,
+                            type: Math.random() > 0.5 ? 'fast' : 'slow' // Zona cepat atau lambat
+                        };
+                        
+                        // Periksa tabrakan
+                        let collision = false;
+                        
+                        for (let sx = zone.x; sx < zone.x + zone.width; sx++) {
+                            for (let sy = zone.y; sy < zone.y + zone.height; sy++) {
+                                // Dengan ular
+                                if (snake.some(segment => segment.x === sx && segment.y === sy)) {
+                                    collision = true;
+                                    break;
+                                }
+                                
+                                // Dengan rintangan
+                                if (obstacles.some(o => o.x === sx && o.y === sy)) {
+                                    collision = true;
+                                    break;
+                                }
+                                
+                                // Dengan makanan
+                                if (food.some(f => f.x === sx && f.y === sy)) {
+                                    collision = true;
+                                    break;
+                                }
+                            }
+                            if (collision) break;
+                        }
+                        
+                        if (!collision) {
+                            validPosition = true;
+                        }
+                    }
+                    
+                    speedZones.push(zone);
+                }
+            }
+        }
+        
+        function generateMovingObstacles() {
+            movingObstacles = [];
+            const levelConfig = getLevelConfig(currentLevel);
+            
+            if (levelConfig.hasMoving && currentLevel >= 10) {
+                const movingCount = 2 + Math.floor(currentLevel / 20);
+                
+                for (let i = 0; i < movingCount; i++) {
+                    movingObstacles.push({
+                        x: Math.floor(Math.random() * GRID_WIDTH),
+                        y: Math.floor(Math.random() * GRID_HEIGHT),
+                        direction: ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)],
+                        speed: 1,
+                        moveCounter: 0
+                    });
+                }
+            }
+        }
+        
+        function updateMovingObstacles() {
+            for (let obstacle of movingObstacles) {
+                obstacle.moveCounter++;
+                
+                if (obstacle.moveCounter >= 10) { // Bergerak setiap 10 frame
+                    obstacle.moveCounter = 0;
+                    
+                    // Simpan posisi lama
+                    const oldX = obstacle.x;
+                    const oldY = obstacle.y;
+                    
+                    // Update posisi berdasarkan arah
+                    switch(obstacle.direction) {
+                        case 'up': obstacle.y--; break;
+                        case 'down': obstacle.y++; break;
+                        case 'left': obstacle.x--; break;
+                        case 'right': obstacle.x++; break;
+                    }
+                    
+                    // Jika menabrak batas, ubah arah
+                    if (obstacle.x < 0 || obstacle.x >= GRID_WIDTH || 
+                        obstacle.y < 0 || obstacle.y >= GRID_HEIGHT ||
+                        obstacles.some(o => o.x === obstacle.x && o.y === obstacle.y)) {
+                        
+                        // Kembali ke posisi lama
+                        obstacle.x = oldX;
+                        obstacle.y = oldY;
+                        
+                        // Pilih arah acak baru
+                        const directions = ['up', 'down', 'left', 'right'];
+                        obstacle.direction = directions[Math.floor(Math.random() * 4)];
+                    }
+                }
+            }
+        }
+        
+        function update() {
+            // Update arah
+            direction = nextDirection;
+            
+            // Hitung posisi kepala baru
+            const head = {...snake[0]};
+            
+            switch(direction) {
+                case 'up': head.y--; break;
+                case 'down': head.y++; break;
+                case 'left': head.x--; break;
+                case 'right': head.x++; break;
+            }
+            
+            // Periksa tabrakan dengan dinding
+            if (head.x < 0 || head.x >= GRID_WIDTH || head.y < 0 || head.y >= GRID_HEIGHT) {
+                loseLife();
+                return;
+            }
+            
+            // Periksa tabrakan dengan tubuh sendiri
+            for (let segment of snake) {
+                if (head.x === segment.x && head.y === segment.y) {
+                    loseLife();
+                    return;
+                }
+            }
+            
+            // Periksa tabrakan dengan rintangan statis
+            for (let obstacle of obstacles) {
+                if (head.x === obstacle.x && head.y === obstacle.y) {
+                    loseLife();
+                    return;
+                }
+            }
+            
+            // Periksa tabrakan dengan rintangan bergerak
+            for (let obstacle of movingObstacles) {
+                if (head.x === obstacle.x && head.y === obstacle.y) {
+                    loseLife();
+                    return;
+                }
+            }
+            
+            // Periksa portal
+            for (let portal of portals) {
+                if (head.x === portal.x && head.y === portal.y) {
+                    const pairPortal = portals.find(p => p.id === portal.pairId);
+                    if (pairPortal) {
+                        head.x = pairPortal.x;
+                        head.y = pairPortal.y;
+                    }
+                    break;
+                }
+            }
+            
+            // Periksa zona kecepatan
+            let inSpeedZone = false;
+            let speedMultiplier = 1;
+            for (let zone of speedZones) {
+                if (head.x >= zone.x && head.x < zone.x + zone.width &&
+                    head.y >= zone.y && head.y < zone.y + zone.height) {
+                    inSpeedZone = true;
+                    speedMultiplier = zone.type === 'fast' ? 1.5 : 0.5;
+                    break;
+                }
+            }
+            
+            // Tambahkan kepala baru
+            snake.unshift(head);
+            
+            // Periksa apakah makan makanan
+            let ateFood = false;
+            for (let i = 0; i < food.length; i++) {
+                if (head.x === food[i].x && head.y === food[i].y) {
+                    // Tambah score berdasarkan jenis makanan
+                    const points = food[i].type === 'gold' ? 50 : 10;
+                    score += points;
+                    
+                    // Update progress level
+                    levelProgress++;
+                    
+                    // Hapus makanan yang dimakan
+                    food.splice(i, 1);
+                    
+                    // Tambah makanan baru
+                    generateFood();
+                    
+                    // Update UI
+                    updateUI();
+                    
+                    // Cek jika level selesai
+                    if (levelProgress >= levelTarget) {
+                        completeLevel();
+                        return;
+                    }
+                    
+                    ateFood = true;
+                    break;
+                }
+            }
+            
+            // Jika tidak makan, hapus ekor
+            if (!ateFood) {
+                snake.pop();
+            }
+            
+            // Update rintangan bergerak
+            updateMovingObstacles();
+            
+            // Gambar ulang
+            draw();
+            
+            // Adjust speed jika di zona kecepatan
+            if (inSpeedZone && !isPaused && !levelComplete) {
+                clearInterval(gameInterval);
+                gameInterval = setInterval(gameLoop, gameSpeed / speedMultiplier);
+            }
+        }
+        
+        function gameLoop() {
+            if (!isPaused && !isGameOver && !levelComplete) {
+                update();
+            }
+        }
+        
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0a0a1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Gambar grid (hanya di level rendah)
+            if (currentLevel <= 10) {
+                ctx.strokeStyle = 'rgba(0, 255, 136, 0.05)';
+                ctx.lineWidth = 0.5;
+                
+                for (let x = 0; x < canvas.width; x += GRID_SIZE) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                
+                for (let y = 0; y < canvas.height; y += GRID_SIZE) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Gambar zona kecepatan
+            for (let zone of speedZones) {
+                ctx.fillStyle = zone.type === 'fast' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 50, 50, 0.2)';
+                ctx.fillRect(zone.x * GRID_SIZE, zone.y * GRID_SIZE, zone.width * GRID_SIZE, zone.height * GRID_SIZE);
+                
+                ctx.strokeStyle = zone.type === 'fast' ? '#00ff88' : '#ff5555';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(zone.x * GRID_SIZE, zone.y * GRID_SIZE, zone.width * GRID_SIZE, zone.height * GRID_SIZE);
+                
+                // Teks di zona
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                const text = zone.type === 'fast' ? 'CEPAT' : 'LAMBAT';
+                ctx.fillText(
+                    text, 
+                    (zone.x + zone.width/2) * GRID_SIZE, 
+                    (zone.y + zone.height/2) * GRID_SIZE + 4
+                );
+            }
+            
+            // Gambar portal
+            for (let portal of portals) {
+                ctx.fillStyle = portal.id === 0 ? 'rgba(255, 85, 255, 0.3)' : 'rgba(85, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(
+                    portal.x * GRID_SIZE + GRID_SIZE/2,
+                    portal.y * GRID_SIZE + GRID_SIZE/2,
+                    GRID_SIZE/2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+                
+                ctx.strokeStyle = portal.id === 0 ? '#ff55ff' : '#55ffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(
+                    portal.x * GRID_SIZE + GRID_SIZE/2,
+                    portal.y * GRID_SIZE + GRID_SIZE/2,
+                    GRID_SIZE/2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.stroke();
+                
+                // Teks portal
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(
+                    portal.id === 0 ? 'A' : 'B',
+                    portal.x * GRID_SIZE + GRID_SIZE/2,
+                    portal.y * GRID_SIZE + GRID_SIZE/2 + 5
+                );
+            }
+            
+            // Gambar rintangan statis
+            for (let obstacle of obstacles) {
+                ctx.fillStyle = '#5555ff';
+                ctx.fillRect(obstacle.x * GRID_SIZE, obstacle.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                
+                ctx.strokeStyle = '#9999ff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(obstacle.x * GRID_SIZE, obstacle.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+            }
+            
+            // Gambar rintangan bergerak
+            for (let obstacle of movingObstacles) {
+                ctx.fillStyle = '#ffaa00';
+                ctx.beginPath();
+                ctx.arc(
+                    obstacle.x * GRID_SIZE + GRID_SIZE/2,
+                    obstacle.y * GRID_SIZE + GRID_SIZE/2,
+                    GRID_SIZE/2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+                
+                ctx.strokeStyle = '#ff8800';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(
+                    obstacle.x * GRID_SIZE + GRID_SIZE/2,
+                    obstacle.y * GRID_SIZE + GRID_SIZE/2,
+                    GRID_SIZE/2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.stroke();
+                
+                // Arah panah
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                
+                let arrow = '→';
+                switch(obstacle.direction) {
+                    case 'up': arrow = '↑'; break;
+                    case 'down': arrow = '↓'; break;
+                    case 'left': arrow = '←'; break;
+                }
+                
+                ctx.fillText(
+                    arrow,
+                    obstacle.x * GRID_SIZE + GRID_SIZE/2,
+                    obstacle.y * GRID_SIZE + GRID_SIZE/2 + 4
+                );
+            }
+            
+            // Gambar makanan
+            for (let f of food) {
+                if (f.type === 'gold') {
+                    // Makanan emas
+                    ctx.fillStyle = '#ffaa00';
+                    ctx.beginPath();
+                    ctx.arc(
+                        f.x * GRID_SIZE + GRID_SIZE/2,
+                        f.y * GRID_SIZE + GRID_SIZE/2,
+                        GRID_SIZE/2,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = '#ff8800';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(
+                        f.x * GRID_SIZE + GRID_SIZE/2,
+                        f.y * GRID_SIZE + GRID_SIZE/2,
+                        GRID_SIZE/2,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.stroke();
+                    
+                    // Efek kilau
+                    ctx.fillStyle = '#ffffaa';
+                    ctx.beginPath();
+                    ctx.arc(
+                        f.x * GRID_SIZE + GRID_SIZE/2 - 3,
+                        f.y * GRID_SIZE + GRID_SIZE/2 - 3,
+                        3,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                } else {
+                    // Makanan normal
+                    ctx.fillStyle = '#ff5555';
+                    ctx.fillRect(f.x * GRID_SIZE, f.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                    
+                    ctx.strokeStyle = '#ff8888';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(f.x * GRID_SIZE, f.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                }
+            }
+            
+            // Gambar ular
+            for (let i = 0; i < snake.length; i++) {
+                const segment = snake[i];
+                
+                // Warna gradient untuk ular
+                const gradient = ctx.createLinearGradient(
+                    segment.x * GRID_SIZE,
+                    segment.y * GRID_SIZE,
+                    segment.x * GRID_SIZE + GRID_SIZE,
+                    segment.y * GRID_SIZE + GRID_SIZE
+                );
+                
+                if (i === 0) {
+                    // Kepala
+                    gradient.addColorStop(0, '#00ff88');
+                    gradient.addColorStop(1, '#00cc6a');
+                } else {
+                    // Tubuh
+                    const greenValue = Math.max(50, 200 - i * 5);
+                    gradient.addColorStop(0, `rgb(0, ${greenValue}, 100)`);
+                    gradient.addColorStop(1, `rgb(0, ${Math.max(30, greenValue-50)}, 70)`);
+                }
+                
+                ctx.fillStyle = gradient;
+                
+                // Bentuk kepala berbeda
+                if (i === 0) {
+                    // Kepala dengan sudut membulat
+                    ctx.beginPath();
+                    ctx.roundRect(
+                        segment.x * GRID_SIZE, 
+                        segment.y * GRID_SIZE, 
+                        GRID_SIZE, 
+                        GRID_SIZE, 
+                        5
+                    );
+                    ctx.fill();
+                    
+                    // Mata
+                    ctx.fillStyle = '#000';
+                    let eye1X, eye1Y, eye2X, eye2Y;
+                    
+                    switch(direction) {
+                        case 'right':
+                            eye1X = segment.x * GRID_SIZE + GRID_SIZE - 6;
+                            eye1Y = segment.y * GRID_SIZE + 6;
+                            eye2X = segment.x * GRID_SIZE + GRID_SIZE - 6;
+                            eye2Y = segment.y * GRID_SIZE + GRID_SIZE - 6;
+                            break;
+                        case 'left':
+                            eye1X = segment.x * GRID_SIZE + 6;
+                            eye1Y = segment.y * GRID_SIZE + 6;
+                            eye2X = segment.x * GRID_SIZE + 6;
+                            eye2Y = segment.y * GRID_SIZE + GRID_SIZE - 6;
+                            break;
+                        case 'up':
+                            eye1X = segment.x * GRID_SIZE + 6;
+                            eye1Y = segment.y * GRID_SIZE + 6;
+                            eye2X = segment.x * GRID_SIZE + GRID_SIZE - 6;
+                            eye2Y = segment.y * GRID_SIZE + 6;
+                            break;
+                        case 'down':
+                            eye1X = segment.x * GRID_SIZE + 6;
+                            eye1Y = segment.y * GRID_SIZE + GRID_SIZE - 6;
+                            eye2X = segment.x * GRID_SIZE + GRID_SIZE - 6;
+                            eye2Y = segment.y * GRID_SIZE + GRID_SIZE - 6;
+                            break;
+                    }
+                    
+                    ctx.beginPath();
+                    ctx.arc(eye1X, eye1Y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(eye2X, eye2Y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Tubuh
+                    ctx.fillRect(segment.x * GRID_SIZE, segment.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+                }
+                
+                // Border untuk segment
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(segment.x * GRID_SIZE, segment.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+            }
+            
+            // Gambar info level di sudut
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(10, 10, 180, 60);
+            
+            ctx.fillStyle = '#00ff88';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`LEVEL ${currentLevel}`, 20, 30);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Arial';
+            ctx.fillText(`Makanan: ${levelProgress}/${levelTarget}`, 20, 50);
+            
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText(`Nyawa: ${lives}`, 20, 70);
+        }
+        
+        function updateUI() {
+            scoreElement.textContent = score;
+            levelElement.textContent = currentLevel;
+            livesElement.textContent = lives;
+            highScoreElement.textContent = highScore;
+            
+            // Update progress level
+            levelProgressText.textContent = `${levelProgress}/${levelTarget}`;
+            const progressPercent = (levelProgress / levelTarget) * 100;
+            levelProgressBar.style.width = `${progressPercent}%`;
+            
+            // Update info level
+            const levelConfig = getLevelConfig(currentLevel);
+            levelTitle.textContent = levelConfig.title;
+            levelDesc.textContent = levelConfig.desc;
+            currentLevelElement.textContent = currentLevel;
+            
+            // Update high score jika perlu
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('snake100HighScore', highScore);
+                highScoreElement.textContent = highScore;
+            }
+        }
+        
+        function loseLife() {
+            lives--;
+            updateUI();
+            
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                // Reset ular ke posisi awal
+                snake = [
+                    {x: 5, y: 10},
+                    {x: 4, y: 10},
+                    {x: 3, y: 10}
+                ];
+                direction = 'right';
+                nextDirection = 'right';
+            }
+        }
+        
+        function completeLevel() {
+            levelComplete = true;
+            clearInterval(gameInterval);
+            
+            // Bonus score berdasarkan level
+            const levelBonus = currentLevel * 20;
+            score += levelBonus;
+            
+            // Update UI
+            updateUI();
+            
+            // Tampilkan layar level complete
+            document.getElementById('completed-level').textContent = currentLevel;
+            document.getElementById('level-score').textContent = `+${levelBonus}`;
+            
+            // Achievement berdasarkan level
+            let achievement = "";
+            if (currentLevel === 10) achievement = "Pemula Handal!";
+            else if (currentLevel === 20) achievement = "Ahli Portal!";
+            else if (currentLevel === 30) achievement = "Pengendali Kecepatan!";
+            else if (currentLevel === 50) achievement = "Setengah Perjalanan!";
+            else if (currentLevel === 75) achievement = "Master Snake!";
+            else if (currentLevel === 100) achievement = "LEGENDARY SNAKE MASTER!";
+            else achievement = `Level ${currentLevel} selesai!`;
+            
+            document.getElementById('level-achievement').textContent = `Pencapaian: ${achievement}`;
+            levelCompleteScreen.style.display = 'flex';
+        }
+        
+        function nextLevel() {
+            currentLevel++;
+            if (currentLevel > 100) currentLevel = 100; // Max level
+            
+            // Tambah nyawa setiap 5 level
+            if (currentLevel % 5 === 0) {
+                lives = Math.min(lives + 1, 5);
+            }
+            
+            levelCompleteScreen.style.display = 'none';
+            initGame();
+            startGameLoop();
+        }
+        
+        function gameOver() {
+            isGameOver = true;
+            clearInterval(gameInterval);
+            
+            // Update layar game over
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-level').textContent = currentLevel;
+            document.getElementById('final-high-score').textContent = highScore;
+            
+            gameOverScreen.style.display = 'flex';
+        }
+        
+        function startGame() {
+            if (!isGameStarted) {
+                isGameStarted = true;
+                initGame();
+            }
+            
+            if (isGameOver) {
+                // Reset game
+                score = 0;
+                currentLevel = 1;
+                lives = 3;
+                isGameOver = false;
+                gameOverScreen.style.display = 'none';
+                initGame();
+            }
+            
+            isPaused = false;
+            pauseBtn.textContent = 'PAUSE';
+            levelComplete = false;
+            
+            startGameLoop();
+        }
+        
+        function startGameLoop() {
+            clearInterval(gameInterval);
+            gameInterval = setInterval(gameLoop, gameSpeed);
+        }
+        
+        function togglePause() {
+            if (!isGameStarted || isGameOver || levelComplete) return;
+            
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? 'RESUME' : 'PAUSE';
+            
+            if (!isPaused) {
+                startGameLoop();
+            } else {
+                clearInterval(gameInterval);
+            }
+        }
+        
+        function restartGame() {
+            score = 0;
+            currentLevel = 1;
+            lives = 3;
+            isGameOver = false;
+            isGameStarted = true;
+            gameOverScreen.style.display = 'none';
+            levelCompleteScreen.style.display = 'none';
+            initGame();
+            startGameLoop();
+        }
+        
+        // ============= EVENT LISTENERS =============
+        startBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        restartBtn.addEventListener('click', restartGame);
+        playAgainBtn.addEventListener('click', () => {
+            score = 0;
+            currentLevel = 1;
+            lives = 3;
+            isGameOver = false;
+            gameOverScreen.style.display = 'none';
+            startGame();
+        });
+        continueBtn.addEventListener('click', nextLevel);
+        
+        // Kontrol mobile
+        upBtn.addEventListener('click', () => { if (direction !== 'down') nextDirection = 'up'; });
+        downBtn.addEventListener('click', () => { if (direction !== 'up') nextDirection = 'down'; });
+        leftBtn.addEventListener('click', () => { if (direction !== 'right') nextDirection = 'left'; });
+        rightBtn.addEventListener('click', () => { if (direction !== 'left') nextDirection = 'right'; });
+        
+        // Kontrol keyboard
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowUp':
+                    if (direction !== 'down') nextDirection = 'up';
+                    e.preventDefault();
+                    break;
+                case 'ArrowDown':
+                    if (direction !== 'up') nextDirection = 'down';
+                    e.preventDefault();
+                    break;
+                case 'ArrowLeft':
+                    if (direction !== 'right') nextDirection = 'left';
+                    e.preventDefault();
+                    break;
+                case 'ArrowRight':
+                    if (direction !== 'left') nextDirection = 'right';
+                    e.preventDefault();
+                    break;
+                case ' ':
+                case 'p':
+                    togglePause();
+                    e.preventDefault();
+                    break;
+                case 'Enter':
+                    if (isGameOver) {
+                        startGame();
+                    }
+                    e.preventDefault();
+                    break;
+                case 'r':
+                case 'R':
+                    restartGame();
+                    e.preventDefault();
+                    break;
+            }
+        });
+        
+        // Polyfill untuk roundRect jika tidak didukung
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                if (width < 2 * radius) radius = width / 2;
+                if (height < 2 * radius) radius = height / 2;
+                this.beginPath();
+                this.moveTo(x + radius, y);
+                this.arcTo(x + width, y, x + width, y + height, radius);
+                this.arcTo(x + width, y + height, x, y + height, radius);
+                this.arcTo(x, y + height, x, y, radius);
+                this.arcTo(x, y, x + width, y, radius);
+                this.closePath();
+                return this;
+            };
+        }
+        
+        // Inisialisasi saat halaman dimuat
+        window.addEventListener('load', () => {
+            highScoreElement.textContent = highScore;
+            updateUI();
+            draw();
+        });
+    </script>
+</body>
+</html>
